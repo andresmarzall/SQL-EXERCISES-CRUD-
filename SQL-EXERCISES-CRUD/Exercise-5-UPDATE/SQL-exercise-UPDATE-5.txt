@@ -1,0 +1,37 @@
+-- This information that we are going to update follows good practices. 
+-- It is equivalent to the first result of the query made with the first exercise, where we are updating the specified shipping date.
+
+-- Before:
+
+-- Update the shipping date (ShippedDate) of a specific order (OrderID 10248)
+DECLARE @OrderIDToUpdate INT = 10248;
+DECLARE @NewShippedDate DATETIME = '2023-09-13 10:00:00.000'; -- New shipping date
+
+-- Start a transaction
+BEGIN TRANSACTION;
+
+BEGIN TRY
+    -- Update the shipping date of the specific order
+    UPDATE dbo.Orders
+    SET ShippedDate = @NewShippedDate
+    WHERE OrderID = @OrderIDToUpdate;
+
+    -- Commit the transaction
+    COMMIT;
+END TRY
+BEGIN CATCH
+    -- In case of an error, rollback the transaction
+    ROLLBACK;
+    -- Handle the error according to your needs
+    -- You can log the error or throw a custom exception
+END CATCH;
+
+
+-- Result:
+
+-- 10248	VINET	Vins et alcools Chevalier	5	Steven Buchanan	1996-07-04 00:00:00.000	1996-08-01 00:00:00.000	1996-07-16 00:00:00.000
+
+
+After:
+
+10248	VINET	Vins et alcools Chevalier	5	Steven Buchanan	1996-07-04 00:00:00.000	1996-08-01 00:00:00.000	2023-09-13 10:00:00.000

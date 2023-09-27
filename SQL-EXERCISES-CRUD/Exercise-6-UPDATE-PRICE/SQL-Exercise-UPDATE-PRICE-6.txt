@@ -1,0 +1,72 @@
+-- Before:
+
+-- Check to get current prices for products in a specific category
+DECLARE @CategoryID INT = 1; -- Replace with desired category ID
+
+SELECT
+    ProductName,
+    UnitPrice
+FROM
+    dbo.Products
+WHERE
+    CategoryID = @CategoryID;
+
+- Result:
+
+-- Chai	18,00
+-- Chang	19,00
+-- Guaraná Fantástica	4,50
+-- Sasquatch Ale	14,00
+-- Steeleye Stout	18,00
+-- Côte de Blaye	263,50
+-- Chartreuse verte	18,00
+-- Ipoh Coffee	46,00
+-- Laughing Lumberjack Lager	14,00
+-- Outback Lager	15,00
+-- Rhönbräu Klosterbier	7,75
+-- Lakkalikööri	18,00
+
+
+-- After:
+
+-- Update prices of products in a specific category with a 10% discount
+DECLARE @CategoryID INT = 1; -- Replace with the desired CategoryID
+DECLARE @Discount DECIMAL(5, 2) = 0.10; -- Desired discount percentage (10%)
+
+-- Start a transaction
+BEGIN TRANSACTION;
+
+BEGIN TRY
+    -- Update prices of products one by one with the discount
+    UPDATE dbo.Products
+    SET UnitPrice = UnitPrice * (1 - @Discount) -- Apply the discount
+    WHERE CategoryID = @CategoryID;
+
+    -- Commit the transaction
+    COMMIT;
+END TRY
+BEGIN CATCH
+    -- In case of an error, rollback the transaction
+    ROLLBACK;
+    -- Handle the error according to your needs
+    -- You can log the error or throw a custom exception
+END CATCH;
+
+
+-- Result:
+
+
+-- Chai	16,20
+-- Chang	17,10
+-- Guaraná Fantástica	4,05
+-- Sasquatch Ale	12,60
+-- Steeleye Stout	16,20
+-- Côte de Blaye	237,15
+-- Chartreuse verte	16,20
+-- Ipoh Coffee	41,40
+-- Laughing Lumberjack Lager	12,60
+-- Outback Lager	13,50
+-- Rhönbräu Klosterbier	6,975
+-- Lakkalikööri	16,20
+
+-- Prices have been updated by applying the 10% discount to each product in the specified category.

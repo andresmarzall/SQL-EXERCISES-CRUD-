@@ -1,0 +1,31 @@
+-- This query retrieves a summary of customer orders, including the total number of orders,
+-- the total amount spent by each customer, and the customer with the highest total spending.
+
+-- Common Table Expression (CTE) to calculate total spending per customer
+WITH CustomerSpending AS (
+    SELECT
+        c.CustomerID,
+        c.CompanyName,
+        COUNT(o.OrderID) AS TotalOrders,
+        SUM(od.UnitPrice * od.Quantity) AS TotalSpending
+    FROM
+        dbo.Customers c
+    LEFT JOIN
+        dbo.Orders o ON c.CustomerID = o.CustomerID
+    LEFT JOIN
+        dbo.[Order Details] od ON o.OrderID = od.OrderID
+    GROUP BY
+        c.CustomerID, c.CompanyName
+)
+
+-- Main query
+SELECT
+    CS.CustomerID,                    -- Customer ID
+    CS.CompanyName,                   -- Customer Company Name
+    CS.TotalOrders,                   -- Total number of orders
+    CS.TotalSpending,                 -- Total spending
+    RANK() OVER (ORDER BY CS.TotalSpending DESC) AS RankBySpending  -- Ranking by spending
+FROM
+    CustomerSpending CS
+ORDER BY
+    RankBySpending;  -- Order by ranking

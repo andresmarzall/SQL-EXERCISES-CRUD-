@@ -1,0 +1,13 @@
+-- CREATE: Insert multiple customer records into the Customers table
+
+-- New Company 
+INSERT INTO dbo.Customers (CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax)
+VALUES ('NTS', 'NewTech Solutions', 'John Smith', 'CEO', '1234 Innovation Lane', 'Silicon Hills', 'CA', '54321', 'USA', '+1 987-654-3210', '+1 987-654-3211');
+
+-- New Company 
+INSERT INTO dbo.Customers (CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax)
+VALUES ('GIS', 'Global Innovations', 'Emma Brown', 'CTO', '7897 Main Boulevard', 'Big Apple', 'NY', '12345', 'USA', '+1 123-456-7890', '+1 123-456-7891');
+
+-- New Company 
+INSERT INTO dbo.Customers (CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax)
+VALUES ('CDI', 'Creative Dynamics Inc.', 'Michael Johnson', 'VP Sales', '5678 Tech Avenue', 'Los Angeles', 'CA', '67890', 'USA', '+1 555-555-5555', '+1 555-555-5556');

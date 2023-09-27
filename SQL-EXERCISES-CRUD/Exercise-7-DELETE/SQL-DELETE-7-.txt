@@ -1,0 +1,69 @@
+-- Before:
+
+-- The query I have made is a SQL query that uses multiple JOINs to get information about
+-- orders and products related to a specific customer (in this case, 'ALFKI').
+-- The result shows the details of the orders and products associated with that customer, which I will proceed to delete.
+
+SELECT C.CustomerID, C.CompanyName, C.ContactName, O.OrderID, O.OrderDate, OD.ProductID, P.ProductName, OD.UnitPrice, OD.Quantity
+FROM Customers C
+LEFT JOIN Orders O ON C.CustomerID = O.CustomerID
+LEFT JOIN [Order Details] OD ON O.OrderID = OD.OrderID
+LEFT JOIN Products P ON OD.ProductID = P.ProductID
+WHERE C.CustomerID = 'ALFKI'; -- Replace 'CustomerID' with the ID of the customer you want to see
+
+-- Result:
+
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10643	1997-08-25 00:00:00.000	28	Rössle Sauerkraut	45,60	15
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10643	1997-08-25 00:00:00.000	39	Chartreuse verte	18,00	21
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10643	1997-08-25 00:00:00.000	46	Spegesild	12,00	2
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10692	1997-10-03 00:00:00.000	63	Vegie-spread	43,90	20
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10702	1997-10-13 00:00:00.000	3	Aniseed Syrup	10,00	6
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10702	1997-10-13 00:00:00.000	76	Lakkalikööri	18,00	15
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10835	1998-01-15 00:00:00.000	59	Raclette Courdavault	55,00	15
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10835	1998-01-15 00:00:00.000	77	Original Frankfurter grüne Soße	13,00	2
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10952	1998-03-16 00:00:00.000	6	Grandma's Boysenberry Spread	25,00	16
+-- ALFKI	Alfreds Futterkiste	Maria Anders	10952	1998-03-16 00:00:00.000	28	Rössle Sauerkraut	45,60	2
+-- ALFKI	Alfreds Futterkiste	Maria Anders	11011	1998-04-09 00:00:00.000	58	Escargots de Bourgogne	13,25	40
+-- ALFKI	Alfreds Futterkiste	Maria Anders	11011	1998-04-09 00:00:00.000	71	Flotemysost	21,50	20
+
+
+-- After:
+
+
+BEGIN TRANSACTION;
+
+-- Delete order details associated with the customer
+DELETE FROM [Order Details]
+WHERE OrderID IN (
+    SELECT O.OrderID
+    FROM Customers C
+    LEFT JOIN Orders O ON C.CustomerID = O.CustomerID
+    WHERE C.CustomerID = 'ALFKI'
+);
+
+-- Delete orders for customer 'ALFKI'
+DELETE FROM Orders
+WHERE CustomerID = 'ALFKI';
+
+-- Delete customer 'ALFKI'
+DELETE FROM Customers
+WHERE CustomerID = 'ALFKI';
+
+-- Check for errors and perform a COMMIT or ROLLBACK
+IF @@ERROR <> 0
+BEGIN
+    ROLLBACK;
+END
+ELSE
+BEGIN
+    COMMIT;
+END;
+
+
+-- With this deletion operation, we have performed a complete and secure deletion
+-- of all data related to client 'ALFKI'. This process includes cascading deletion, which 
+-- means that we not only delete the customer, but also delete all their order details 
+-- and the orders themselves in a coordinated manner and without compromising the 
+-- integrity of the database. Furthermore, we have implemented this operation within a 
+-- transaction, following best practices, ensuring that all operations complete 
+-- successfully before making changes to the database.

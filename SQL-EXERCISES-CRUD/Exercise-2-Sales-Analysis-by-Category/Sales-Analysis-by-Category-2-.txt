@@ -1,0 +1,34 @@
+-- This query retrieves the total quantity of products sold per category, 
+-- along with the average price of those products and the category with the highest sales.
+
+-- Common Table Expression (CTE) to calculate sales per product
+WITH SalesByCategory AS (
+    SELECT
+        c.CategoryName,                        -- Category name
+        p.ProductName,                         -- Product name
+        od.Quantity,                            -- Quantity sold
+        (od.UnitPrice * od.Quantity) AS SalesPerProduct  -- Sales per product
+    FROM
+        dbo.Categories c
+    INNER JOIN
+        dbo.Products p ON c.CategoryID = p.CategoryID
+    INNER JOIN
+        dbo.[Order Details] od ON p.ProductID = od.ProductID
+)
+
+-- Main query
+SELECT
+    SBC.CategoryName,                             -- Category name
+    SUM(SBC.Quantity) AS TotalSold,               -- Total quantity sold
+    AVG(SBC.SalesPerProduct) AS AveragePrice,     -- Average price
+    MAX(SUM(SBC.Quantity)) OVER () AS MaxSalesInACategory  -- Max sales in a category
+FROM
+    SalesByCategory SBC
+GROUP BY
+    SBC.CategoryName
+ORDER BY
+    TotalSold DESC;  -- Order by total sold quantity in descending order
+
+-- This SQL code calculates and displays the total number of products sold in each
+-- category, the average price of those products, and the category that has had the highest sales.
+
